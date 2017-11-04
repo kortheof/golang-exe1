@@ -1,2 +1,2 @@
 # golang-exe1
-Golang first exercise repository
+Golang Exercises Delivery Repository
