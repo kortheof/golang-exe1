@@ -1,7 +1,7 @@
 # golang-exercises
 Golang Exercises Delivery Repository
 
-Use the following command to clone this Repository to a local directory
+Use the following command to clone this Repository to a local directory:
 
 $ git clone https://github.com/kortheof/golang-exercises.git
 

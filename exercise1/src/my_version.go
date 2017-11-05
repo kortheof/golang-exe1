@@ -18,6 +18,6 @@ func main() {
 		Patch: 5,
 	}
 
-	//Call the method VersionApi() to print the hard-coded version
+	///Invoke the method VersionApi() to print the hard-coded version
 	My_version.VersionApi()
 }
