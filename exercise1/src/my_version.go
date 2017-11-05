@@ -15,8 +15,8 @@ func (v Version) VersionApi() {
 
 func main() {
 
-	//Declare a pointer to the Version struct to receive the command-line inserted versions
-	valuePtr := &Version{}
+	//Initiate an empty Version struct to receive the command-line inserted versions
+	valuePtr := Version{}
 
 	flag.UintVar(&valuePtr.Major, "major", 0, "Major Version of the Code")
 	flag.UintVar(&valuePtr.Minor, "minor", 0, "Minor Version of the Code")
@@ -25,5 +25,5 @@ func main() {
 	flag.Parse()
 
 	//Invoke the method VersionAPi() to print the command-line inserted versions
-	valuePtr.VersionApi() // the same as (*valuePtr).VersionApi()
+	valuePtr.VersionApi()
 }
