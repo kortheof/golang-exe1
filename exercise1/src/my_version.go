@@ -3,7 +3,7 @@ package main
 import "fmt"
 
 type Version struct {
-	Major, Minor, Patch uint16 //Choosing uint to avoid erroneous usage of negative value
+	Major, Minor, Patch uint //Choosing uint to avoid erroneous usage of negative value
 }
 
 func (v Version) VersionApi() {
