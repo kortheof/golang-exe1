@@ -23,5 +23,3 @@ func main() {
 
 	My_version.VersionApi()
 }
-
-//go build -ldflags "-X main.major=3 -X main.minor=2 -X main.patch=1" go_exercise1.go
