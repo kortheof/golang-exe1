@@ -11,6 +11,14 @@ In order to view the source code of the first exercise:
 
 $ cd ./exercise1/src/
 
-To execute the code:
+The code has been compiled with the following command:
 
-$ go run my_version.go
+$ go build -o ../bin/my_version my_version.go
+
+To execute the code use the following command. The version of the code is inserted using arguments during run-time:
+
+$ cd ../bin/
+
+$ ./my_version -major 2 -minor 6 -patch 30
+
+Use your own versions, and the app will print them.
