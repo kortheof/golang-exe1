@@ -11,6 +11,15 @@ In order to view the source code of the first exercise:
 
 $ cd ./exercise1/src/
 
-To execute the code:
+In this branch of the code, the versions are provided during compilation time.
+The code has been compiled using the following command:
 
-$ go run my_version.go
+$ go build -o ../bin/my_version -ldflags "-X main.major=2 -X main.minor=6 -X main.patch=50" my_version.go
+
+In order to execute the compiled binary, do the following:
+
+$ cd ../bin
+
+$ ./my_version
+
+This will print the versions that were inserted during compilation.
