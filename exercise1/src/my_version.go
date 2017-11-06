@@ -1,29 +1,27 @@
 package main
 
 import (
-	"flag"
 	"fmt"
 )
 
 type Version struct {
-	Major, Minor, Patch uint //Choosing uint to avoid erroneous usage of negative value
+	Major, Minor, Patch string
 }
 
 func (v Version) VersionApi() {
-	fmt.Printf("{\"version\": \"%d.%d.%d\"}\n", v.Major, v.Minor, v.Patch)
+	fmt.Printf("{\"version\": \"%s.%s.%s\"}\n", v.Major, v.Minor, v.Patch)
 }
+
+//Variables that will hold the versions upon complilation
+var (
+	major, minor, patch string
+)
 
 func main() {
+	//Struct of versions
+	My_version := Version{major, minor, patch}
 
-	//Initiate an empty Version struct to receive the command-line inserted versions
-	valuePtr := Version{}
-
-	flag.UintVar(&valuePtr.Major, "major", 0, "Major Version of the Code")
-	flag.UintVar(&valuePtr.Minor, "minor", 0, "Minor Version of the Code")
-	flag.UintVar(&valuePtr.Patch, "patch", 0, "Patch Version of the Code")
-
-	flag.Parse()
-
-	//Invoke the method VersionAPi() to print the command-line inserted versions
-	valuePtr.VersionApi()
+	My_version.VersionApi()
 }
+
+//go build -ldflags "-X main.major=3 -X main.minor=2 -X main.patch=1" go_exercise1.go
