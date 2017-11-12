@@ -11,18 +11,18 @@ import (
 )
 
 type Employee struct {
-	Name string `json:"name"`
+	Name    string `json:"name"`
 	Surname string `json:"surname"`
-	Title string `json:"title"`
-	Salary uint64 `json:"salary"`
+	Title   string `json:"title"`
+	Salary  uint64 `json:"salary"`
 }
 
 type EmployeeSlice []Employee
 
 //Constructor function that returns an instance of an Employee struct
-func newPerson(s []string, p int) (Employee,error) {
+func newPerson(s []string, p int) (Employee, error) {
 	if len(s) >= 5 {
-		return Employee{},fmt.Errorf("More than 4 fields in line %d",p)
+		return Employee{}, fmt.Errorf("More than 4 fields in line %d", p)
 	}
 	//Convert the salary to uint as the Employee struct requires
 	uintSalary, _ := strconv.ParseUint(s[3], 10, 64)
@@ -38,16 +38,16 @@ func newPerson(s []string, p int) (Employee,error) {
 //It has a slice receiver, meaning that every invokation is very cheap on memory
 func (e EmployeeSlice) AverageSalary() uint64 {
 	total := uint64(0)
-	for _,v := range e {
+	for _, v := range e {
 		total += v.Salary
 	}
-	return total/uint64(len(e))
+	return total / uint64(len(e))
 }
 
 //Method to calculate the maximum salary of the input Employees slice
 func (e EmployeeSlice) MaxSalary() uint64 {
 	max := uint64(0)
-	for _,v := range e {
+	for _, v := range e {
 		if v.Salary > max {
 			max = v.Salary
 		}
@@ -59,9 +59,9 @@ func (e EmployeeSlice) MaxSalary() uint64 {
 func (e EmployeeSlice) BiggestSalary() EmployeeSlice {
 	maxSal := e.MaxSalary()
 	var s EmployeeSlice
-	for i,v := range e {
+	for i, v := range e {
 		if v.Salary == maxSal {
-			s = append(s,e[i])
+			s = append(s, e[i])
 		}
 	}
 	return s
@@ -70,7 +70,7 @@ func (e EmployeeSlice) BiggestSalary() EmployeeSlice {
 //Method to find the number of employees per position
 func (e EmployeeSlice) TitleEmployees() map[string]int {
 	empTitle := make(map[string]int)
-	for _,v := range e {
+	for _, v := range e {
 		_, exists := empTitle[v.Title]
 		if exists == false {
 			empTitle[v.Title] = 1
@@ -85,9 +85,9 @@ func (e EmployeeSlice) TitleEmployees() map[string]int {
 func JsonPrint(i interface{}) {
 	objJson, err := json.Marshal(i)
 	if err != nil {
-		fmt.Println("error:",err)
+		fmt.Println("error:", err)
 	}
-	fmt.Println(string(objJson)+"\n")
+	fmt.Println(string(objJson) + "\n")
 }
 
 func main() {
