@@ -1,8 +1,8 @@
 package main
 
 import (
-	//"bufio"
 	"encoding/csv"
+	"encoding/json"
 	"fmt"
 	"io"
 	"log"
@@ -11,12 +11,19 @@ import (
 )
 
 type Employee struct {
-	Name, Surname, Title string
-	Salary               uint64
+	Name string `json:"name"`
+	Surname string `json:"surname"`
+	Title string `json:"title"`
+	Salary uint64 `json:"salary"`
 }
 
+type EmployeeSlice []Employee
+
 //Constructor function that returns an instance of an Employee struct
-func newPerson(s []string) Employee {
+func newPerson(s []string, p int) (Employee,error) {
+	if len(s) >= 5 {
+		return Employee{},fmt.Errorf("More than 4 fields in line %d",p)
+	}
 	//Convert the salary to uint as the Employee struct requires
 	uintSalary, _ := strconv.ParseUint(s[3], 10, 64)
 	return Employee{
@@ -24,7 +31,63 @@ func newPerson(s []string) Employee {
 		Surname: s[1],
 		Title:   s[2],
 		Salary:  uintSalary,
+	}, nil
+}
+
+//Method to calculate the average salary of the input Employees slice
+//It has a slice receiver, meaning that every invokation is very cheap on memory
+func (e EmployeeSlice) AverageSalary() uint64 {
+	total := uint64(0)
+	for _,v := range e {
+		total += v.Salary
 	}
+	return total/uint64(len(e))
+}
+
+//Method to calculate the maximum salary of the input Employees slice
+func (e EmployeeSlice) MaxSalary() uint64 {
+	max := uint64(0)
+	for _,v := range e {
+		if v.Salary > max {
+			max = v.Salary
+		}
+	}
+	return max
+}
+
+//Method that retrieves the Employees that receive the maximum salary
+func (e EmployeeSlice) BiggestSalary() EmployeeSlice {
+	maxSal := e.MaxSalary()
+	var s EmployeeSlice
+	for i,v := range e {
+		if v.Salary == maxSal {
+			s = append(s,e[i])
+		}
+	}
+	return s
+}
+
+//Method to find the number of employees per position
+func (e EmployeeSlice) TitleEmployees() map[string]int {
+	empTitle := make(map[string]int)
+	for _,v := range e {
+		_, exists := empTitle[v.Title]
+		if exists == false {
+			empTitle[v.Title] = 1
+		} else {
+			empTitle[v.Title] += 1
+		}
+	}
+	return empTitle
+}
+
+//Function to convert and print input to json format
+func JsonPrint(i interface{}) {
+	objJson, err := json.Marshal(i)
+	if err != nil {
+		fmt.Println("error:",err)
+	}
+	fmt.Println(string(objJson)+"\n")
 }
 
 func main() {
@@ -34,12 +97,11 @@ func main() {
 	}
 	defer csvFile.Close()
 
-	//A slice of Employee struct, every index will hold name, surname, title and salary
-	var person []Employee
+	var person EmployeeSlice
 
-	//reader := csv.NewReader(bufio.NewReader(csvFile))
 	reader := csv.NewReader(csvFile)
 	//Read the first line to exclude it
+	lineCnt := 0
 	reader.Read()
 
 	//Parse the input csv file and create a new Employee instance from each line
@@ -50,9 +112,36 @@ func main() {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		person = append(person, newPerson(line))
+		lineCnt += 1
+		newEmp, err := newPerson(line, lineCnt)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
+		person = append(person, newEmp)
 	}
-	fmt.Println(person[0].Salary)
 
-	//Panw sto slice apo Employee structs, 8a xtisw me8odous na upologizoun ta results.
+	/////////1on
+	x := person.AverageSalary()
+
+	type Fanis struct {
+		AverageSalary uint64 `json:"average_salary"`
+	}
+
+	strt := Fanis{AverageSalary: x}
+	JsonPrint(strt)
+
+	/////////////2on
+	t := person.TitleEmployees()
+	JsonPrint(t)
+
+	////////////3on
+	z := person.BiggestSalary()
+
+	type Fanisb struct {
+		BiggestSalary EmployeeSlice `json:"biggest_salary"`
+	}
+
+	strtb := Fanisb{BiggestSalary: z}
+	JsonPrint(strtb)
 }
