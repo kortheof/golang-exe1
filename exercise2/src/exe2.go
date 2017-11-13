@@ -91,6 +91,7 @@ func JsonPrint(i interface{}) {
 }
 
 func main() {
+	//Load the defined input csv file
 	csvFile, err := os.Open("devops.csv")
 	if err != nil {
 		log.Fatal(err)
@@ -104,7 +105,7 @@ func main() {
 	reader.Read()
 	lineCnt := 1
 
-	//Parse the input csv file and create a new Employee instance from each line
+	//Parse the file and create a new Employee instance from each line
 	for {
 		line, err := reader.Read()
 		if err == io.EOF {
@@ -121,27 +122,34 @@ func main() {
 		person = append(person, newEmp)
 	}
 
-	/////////1on
-	x := person.AverageSalary()
-
-	type Fanis struct {
-		AverageSalary uint64 `json:"average_salary"`
+	//Declare structs to host all the requested statistics
+	type AvSal struct {
+		AvSal uint64 `json:"average_salary"`
 	}
 
-	strt := Fanis{AverageSalary: x}
-	JsonPrint(strt)
-
-	/////////////2on
-	t := person.TitleEmployees()
-	JsonPrint(t)
-
-	////////////3on
-	z := person.BiggestSalary()
-
-	type Fanisb struct {
-		BiggestSalary EmployeeSlice `json:"biggest_salary"`
+	type BigSal struct {
+		BigSal EmployeeSlice `json:"biggest_salary"`
 	}
 
-	strtb := Fanisb{BiggestSalary: z}
-	JsonPrint(strtb)
+	type Statistics struct {
+		AverageSalary AvSal
+		EmpPerJob     map[string]int
+		BiggestSalary BigSal
+	}
+
+	//Calculate statistics based on the created Employees slice and gather the results in a struct
+	empStats := Statistics{
+		AverageSalary: AvSal{
+			AvSal: person.AverageSalary(),
+		},
+		EmpPerJob: person.TitleEmployees(),
+		BiggestSalary: BigSal{
+			BigSal: person.BiggestSalary(),
+		},
+	}
+
+	//Print in json format the requested statistics for the input Employees slice
+	JsonPrint(empStats.AverageSalary)
+	JsonPrint(empStats.EmpPerJob)
+	JsonPrint(empStats.BiggestSalary)
 }
