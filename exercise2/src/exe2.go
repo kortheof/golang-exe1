@@ -101,8 +101,8 @@ func main() {
 
 	reader := csv.NewReader(csvFile)
 	//Read the first line to exclude it
-	lineCnt := 0
 	reader.Read()
+	lineCnt := 1
 
 	//Parse the input csv file and create a new Employee instance from each line
 	for {
