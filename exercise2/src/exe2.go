@@ -20,9 +20,9 @@ type Employee struct {
 type EmployeeSlice []Employee
 
 //Constructor function that returns an instance of an Employee struct
-func newPerson(s []string, p int) (Employee, error) {
+func newPerson(s []string) (Employee, error) {
 	if len(s) >= 5 {
-		return Employee{}, fmt.Errorf("More than 4 fields in line %d", p)
+		return Employee{}, fmt.Errorf("More than 4 fields in line %s", s)
 	}
 	//Convert the salary to uint as the Employee struct requires
 	uintSalary, _ := strconv.ParseUint(s[3], 10, 64)
@@ -103,7 +103,6 @@ func main() {
 	reader := csv.NewReader(csvFile)
 	//Read the first line to exclude it
 	reader.Read()
-	lineCnt := 1
 
 	//Parse the file and create a new Employee instance from each line
 	for {
@@ -113,8 +112,7 @@ func main() {
 		} else if err != nil {
 			log.Fatal(err)
 		}
-		lineCnt += 1
-		newEmp, err := newPerson(line, lineCnt)
+		newEmp, err := newPerson(line)
 		if err != nil {
 			fmt.Println(err)
 			continue
