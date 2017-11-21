@@ -107,7 +107,6 @@ func JsonPrint(i interface{}) string {
 	if err != nil {
 		fmt.Println("error:", err)
 	}
-	fmt.Println(string(objJson) + "\n")
 	return string(objJson)
 }
 
