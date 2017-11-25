@@ -148,11 +148,8 @@ func main() {
 	}
 
 	//Initiate configuration for Web Server to expose the calculated values
+	//Define new *ServeMux
 	mux := http.NewServeMux()
-
-	//mux.HandleFunc("/average", webStats)
-	//mux.HandleFunc("/employees", webStats)
-	//mux.HandleFunc("/big", webStats)
 
 	mux.HandleFunc("/average", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.AverageSalary))
@@ -167,15 +164,18 @@ func main() {
 	})
 
 	mux.HandleFunc("/employee", func(w http.ResponseWriter, r *http.Request) {
-		var user Employee
-		json.NewDecoder(r.Body).Decode(&user)
-		for _, value := range person {
-			if value.Surname == user.Surname {
-				fmt.Fprintf(w, "%s", JsonPrint(value))
-
-			}
-		}
+		postEmployee(w, r, person)
 	})
 
 	http.ListenAndServe(":8000", mux)
+}
+
+func postEmployee(w http.ResponseWriter, r *http.Request, person EmployeeSlice) {
+	var user Employee
+	json.NewDecoder(r.Body).Decode(&user)
+	for _, value := range person {
+		if value.Surname == user.Surname {
+			fmt.Fprintf(w, "%s", JsonPrint(value))
+		}
+	}
 }
