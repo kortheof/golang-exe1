@@ -11,25 +11,6 @@ import (
 	"strconv"
 )
 
-/*
-var mux map[string]func(http.ResponseWriter, *http.Request)
-
-type myHandler struct{}
-
-func echoString(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprintf(w, "Fanis_result, %q", html.EscapeString(r.URL.Path))
-}
-
-//Orizw ta actions tou myHandler --Ti 8a kanei analoga ta calls pou dexetai
-func (*myHandler) ServeHTTP(w http.ResponseWriter, r *http.Request) {
-	if v, ok := mux[r.URL.String()]; ok {
-		v(w, r)
-	} else {
-		http.NotFound(w, r)
-	}
-}
-*/
-
 type Employee struct {
 	Name    string `json:"name"`
 	Surname string `json:"surname"`
@@ -87,6 +68,15 @@ func (e EmployeeSlice) BiggestSalary() EmployeeSlice {
 	return s
 }
 
+//Function to convert and print input to json format
+func JsonPrint(i interface{}) string {
+	objJson, err := json.Marshal(i)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	return string(objJson)
+}
+
 //Method to find the number of employees per position
 func (e EmployeeSlice) TitleEmployees() map[string]int {
 	empTitle := make(map[string]int)
@@ -99,15 +89,6 @@ func (e EmployeeSlice) TitleEmployees() map[string]int {
 		}
 	}
 	return empTitle
-}
-
-//Function to convert and print input to json format
-func JsonPrint(i interface{}) string {
-	objJson, err := json.Marshal(i)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	return string(objJson)
 }
 
 func main() {
@@ -166,35 +147,26 @@ func main() {
 		},
 	}
 
-	/*
-		server := http.Server{
-			Addr:    ":8000",
-			Handler: &myHandler{},
-		}
-	*/
+	//Initiate configuration for Web Server to expose the calculated values
+	mux := http.NewServeMux()
 
-	/*
-		mux = make(map[string]func(http.ResponseWriter, *http.Request))
-		mux["/"] = echoString
-		mux["/average"] = echoString
-		mux["/employees"] = echoString
-		mux["/big"] = echoString
-		//mux["/employee"]
-	*/
+	//mux.HandleFunc("/average", webStats)
+	//mux.HandleFunc("/employees", webStats)
+	//mux.HandleFunc("/big", webStats)
 
-	http.HandleFunc("/average", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/average", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.AverageSalary))
 	})
 
-	http.HandleFunc("/employees", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/employees", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.EmpPerJob))
 	})
 
-	http.HandleFunc("/big", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/big", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.BiggestSalary))
 	})
 
-	http.HandleFunc("/employee", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/employee", func(w http.ResponseWriter, r *http.Request) {
 		var user Employee
 		json.NewDecoder(r.Body).Decode(&user)
 		for _, value := range person {
@@ -205,6 +177,5 @@ func main() {
 		}
 	})
 
-	//server.ListenAndServe()
-	http.ListenAndServe(":8000", nil)
+	http.ListenAndServe(":8000", mux)
 }
