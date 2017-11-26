@@ -68,15 +68,6 @@ func (e EmployeeSlice) BiggestSalary() EmployeeSlice {
 	return s
 }
 
-//Function to convert and print input to json format
-func JsonPrint(i interface{}) string {
-	objJson, err := json.Marshal(i)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	return string(objJson)
-}
-
 //Method to find the number of employees per position
 func (e EmployeeSlice) TitleEmployees() map[string]int {
 	empTitle := make(map[string]int)
@@ -89,6 +80,15 @@ func (e EmployeeSlice) TitleEmployees() map[string]int {
 		}
 	}
 	return empTitle
+}
+
+//Function to convert and print input to json format
+func JsonPrint(i interface{}) string {
+	objJson, err := json.Marshal(i)
+	if err != nil {
+		fmt.Println("error:", err)
+	}
+	return string(objJson)
 }
 
 func main() {
@@ -151,23 +151,44 @@ func main() {
 	//Define new *ServeMux
 	mux := http.NewServeMux()
 
+	//Define new Server
+	server := http.Server{
+		Addr:    ":8000",
+		Handler: mux,
+	}
+
+	//Define all handler functions
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		//fmt.Fprintf(w, "404 page not found")
+		http.Error(w, "404 page not found", http.StatusNotFound)
+		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusNotFound)
+	})
+
 	mux.HandleFunc("/average", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.AverageSalary))
+		//Log an Apache format response - GET /url HTTP1/1 200
+		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
 	})
 
 	mux.HandleFunc("/employees", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.EmpPerJob))
+		//Log an Apache format response - GET /url HTTP1/1 200
+		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
 	})
 
 	mux.HandleFunc("/big", func(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintf(w, "%s", JsonPrint(empStats.BiggestSalary))
+		//Log an Apache format response - GET /url HTTP1/1 200
+		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
 	})
 
 	mux.HandleFunc("/employee", func(w http.ResponseWriter, r *http.Request) {
 		postEmployee(w, r, person)
 	})
 
-	http.ListenAndServe(":8000", mux)
+	log.Printf("Web Server started successfully, listening on port %s", server.Addr)
+	log.Fatalln("Web Server startup failed with error:", server.ListenAndServe())
+
 }
 
 func postEmployee(w http.ResponseWriter, r *http.Request, person EmployeeSlice) {
@@ -178,4 +199,5 @@ func postEmployee(w http.ResponseWriter, r *http.Request, person EmployeeSlice) 
 			fmt.Fprintf(w, "%s", JsonPrint(value))
 		}
 	}
+	log.Printf("%v %v %v", r.Method, r.URL, r.Proto)
 }
