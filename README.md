@@ -1,4 +1,4 @@
-### Golang Exercises Delivery Repository
+# Golang Exercises Delivery Repository
 
 Use the following command to clone this Repository to a local directory:
 
@@ -7,7 +7,7 @@ $ git clone https://github.com/kortheof/golang-exercises.git
 $ cd ./golang-exercises
 ```
 
-# Exercise 3
+### Exercise 3
 
 In order to view the source code of the third exercise:
 ```bash
@@ -23,7 +23,7 @@ Use the following calls, in order to check the API responses
 $ curl http://localhost:8000/average
 $ curl -d '{"surname":"Eksypnakias"}' http://localhost:8000/employee
 ```
-# Exercise 1
+### Exercise 1
 
 In order to view the source code of the first exercise:
 
