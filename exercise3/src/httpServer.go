@@ -115,7 +115,7 @@ func main() {
 		}
 		newEmp, err := newPerson(line)
 		if err != nil {
-			fmt.Println(err)
+			log.Println(err)
 			continue
 		}
 		person = append(person, newEmp)
@@ -216,7 +216,7 @@ func handlePost(w http.ResponseWriter, r *http.Request, person EmployeeSlice) {
 		log.Printf("%v %v %v %v Error: %v", r.Method, r.URL, r.Proto, http.StatusBadRequest, "Empty input string")
 		return
 	}
-	//Not-decodable input string
+	//Non-decodable input string
 	if err != nil {
 		http.Error(w, "400 Bad Request", http.StatusBadRequest)
 		log.Printf("%v %v %v %v Error: %v", r.Method, r.URL, r.Proto, http.StatusBadRequest, err.Error())
