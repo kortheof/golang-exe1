@@ -1,11 +1,28 @@
-# golang-exercises
-Golang Exercises Delivery Repository
+### Golang Exercises Delivery Repository
 
 Use the following command to clone this Repository to a local directory:
 
 $ git clone https://github.com/kortheof/golang-exercises.git
 
 $ cd ./golang-exercises
+
+# Exercise 3
+
+In order to view the source code of the third exercise:
+```bash
+$ cd ./exercise3/src
+```
+In order to start the Web Server:
+```bash
+$ go run httpServer.go
+```
+
+Use the following calls, in order to check the API responses
+```bash
+$ curl http://localhost:8000/average
+$ curl -d '{"surname":"Eksypnakias"}' http://localhost:8000/employee
+```
+# Exercise 1
 
 In order to view the source code of the first exercise:
 
