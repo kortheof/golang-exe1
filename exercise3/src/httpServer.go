@@ -82,15 +82,6 @@ func (e EmployeeSlice) TitleEmployees() map[string]int {
 	return empTitle
 }
 
-//Function to convert and print input to json format
-func JsonPrint(i interface{}) string {
-	objJson, err := json.Marshal(i)
-	if err != nil {
-		fmt.Println("error:", err)
-	}
-	return string(objJson)
-}
-
 func main() {
 	//Load the defined input csv file
 	csvFile, err := os.Open("devops.csv")
