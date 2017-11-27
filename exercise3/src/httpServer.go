@@ -225,9 +225,12 @@ func handlePost(w http.ResponseWriter, r *http.Request, person EmployeeSlice) {
 	//Input string was successfully decoded, searching for matches
 	for _, value := range person {
 		if value.Surname == user.Surname {
-			fmt.Fprintf(w, "%s", JsonPrint(value))
+			//If a match is found, marshal it in json and return the result to the user
+			handleGet(w, r, value)
 			return
 		}
 	}
-	log.Printf("%v %v %v", r.Method, r.URL, r.Proto)
+	//Generic response, no error returned, and no match found
+	fmt.Fprintf(w, "[]")
+	log.Printf("%v %v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK, "Match not found")
 }
