@@ -159,44 +159,74 @@ func main() {
 
 	//Define all handler functions
 	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		//fmt.Fprintf(w, "404 page not found")
-		http.Error(w, "404 page not found", http.StatusNotFound)
-		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusNotFound)
-	})
-
-	mux.HandleFunc("/average", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "%s", JsonPrint(empStats.AverageSalary))
-		//Log an Apache format response - GET /url HTTP1/1 200
-		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
-	})
-
-	mux.HandleFunc("/employees", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "%s", JsonPrint(empStats.EmpPerJob))
-		//Log an Apache format response - GET /url HTTP1/1 200
-		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
-	})
-
-	mux.HandleFunc("/big", func(w http.ResponseWriter, r *http.Request) {
-		fmt.Fprintf(w, "%s", JsonPrint(empStats.BiggestSalary))
-		//Log an Apache format response - GET /url HTTP1/1 200
-		log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
+		handleNotFound(w, r)
 	})
 
 	mux.HandleFunc("/employee", func(w http.ResponseWriter, r *http.Request) {
-		postEmployee(w, r, person)
+		handlePost(w, r, person)
 	})
 
+	mux.HandleFunc("/average", func(w http.ResponseWriter, r *http.Request) {
+		handleGet(w, r, empStats.AverageSalary)
+		//Use the below function call, in order to check how the Web Server responds when json cannot Marshal the input value
+		//value := make(chan int)
+		//handleGet(w, r, value)
+	})
+
+	mux.HandleFunc("/employees", func(w http.ResponseWriter, r *http.Request) {
+		handleGet(w, r, empStats.EmpPerJob)
+	})
+
+	mux.HandleFunc("/big", func(w http.ResponseWriter, r *http.Request) {
+		handleGet(w, r, empStats.BiggestSalary)
+	})
+
+	//Start the Web Server
 	log.Printf("Web Server started successfully, listening on port %s", server.Addr)
 	log.Fatalln("Web Server startup failed with error:", server.ListenAndServe())
 
 }
 
-func postEmployee(w http.ResponseWriter, r *http.Request, person EmployeeSlice) {
+//Function to handle Web Server generic requests on non-configured endpoints
+func handleNotFound(w http.ResponseWriter, r *http.Request) {
+	http.Error(w, "404 page not found", http.StatusNotFound)
+	//Log an Apache format response - GET /url HTTP1/1 404
+	log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusNotFound)
+}
+
+//Function to handle Web Server requests on configured endpoints
+func handleGet(w http.ResponseWriter, r *http.Request, i interface{}) {
+	objJson, err := json.Marshal(i)
+	if err != nil {
+		http.Error(w, "500 Internal Server Error", http.StatusInternalServerError)
+		log.Printf("%v %v %v %v Error: %v", r.Method, r.URL, r.Proto, http.StatusInternalServerError, err.Error())
+		return
+	}
+	fmt.Fprintf(w, "%s", string(objJson))
+	log.Printf("%v %v %v %v", r.Method, r.URL, r.Proto, http.StatusOK)
+}
+
+//Function to handle the json input requests
+func handlePost(w http.ResponseWriter, r *http.Request, person EmployeeSlice) {
 	var user Employee
-	json.NewDecoder(r.Body).Decode(&user)
+	err := json.NewDecoder(r.Body).Decode(&user)
+	//Empty input string
+	if err == io.EOF {
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		log.Printf("%v %v %v %v Error: %v", r.Method, r.URL, r.Proto, http.StatusBadRequest, "Empty input string")
+		return
+	}
+	//Not-decodable input string
+	if err != nil {
+		http.Error(w, "400 Bad Request", http.StatusBadRequest)
+		log.Printf("%v %v %v %v Error: %v", r.Method, r.URL, r.Proto, http.StatusBadRequest, err.Error())
+		return
+	}
+	//Input string was successfully decoded, searching for matches
 	for _, value := range person {
 		if value.Surname == user.Surname {
 			fmt.Fprintf(w, "%s", JsonPrint(value))
+			return
 		}
 	}
 	log.Printf("%v %v %v", r.Method, r.URL, r.Proto)
