@@ -39,6 +39,7 @@ func main() {
 				Name: "General Task",
 			},
 			//Mandatory field, ProjectID -> represented by customfield_11002 in our Jira
+			//https://upstreamsystems.atlassian.net/rest/api/2/issue/PRDS-2099
 			Unknowns: projectID,
 		},
 	}
