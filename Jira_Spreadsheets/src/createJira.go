@@ -20,8 +20,9 @@ func main() {
 
 	//Handling the custom field of project ID in our Jira. Library tcontainer is used by Go-Jira.
 	//https://github.com/trivago/tgo/blob/master/tcontainer/marshalmap.go
-	projectID := tcontainer.NewMarshalMap()
-
+	customfield_11002 := tcontainer.NewMarshalMap()
+	//map[string]interface{}
+	customfield_11002["value"] = "All Projects"
 	i := jira.Issue{
 		Fields: &jira.IssueFields{
 			Reporter: &jira.User{
@@ -40,7 +41,7 @@ func main() {
 			},
 			//Mandatory field, ProjectID -> represented by customfield_11002 in our Jira
 			//https://upstreamsystems.atlassian.net/rest/api/2/issue/PRDS-2099
-			Unknowns: projectID,
+			Unknowns: customfield_11002,
 		},
 	}
 	issue, _, err := jiraClient.Issue.Create(&i)
