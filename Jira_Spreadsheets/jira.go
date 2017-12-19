@@ -10,7 +10,7 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	jiraClient.Authentication.SetBasicAuth("prdsuser", "PRD$123#")
+	jiraClient.Authentication.SetBasicAuth("prdsuser", "####")
 
 	issue, _, err := jiraClient.Issue.Get("PRDS-4571", nil)
 	if err != nil {

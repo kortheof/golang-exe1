@@ -12,7 +12,7 @@ func main() {
 		panic(err)
 	}
 
-	res, err := jiraClient.Authentication.AcquireSessionCookie("prdsuser", "PRD$123#")
+	res, err := jiraClient.Authentication.AcquireSessionCookie("prdsuser", "#####")
 	if err != nil || res == false {
 		fmt.Printf("Result: %v\n", res)
 		panic(err)
